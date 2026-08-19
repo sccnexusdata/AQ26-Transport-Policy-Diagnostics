@@ -1,0 +1,83 @@
+schema: aq26_transport_policy_protocol_v1
+study_id: london_ulez_v1
+status: registered_pre_analysis
+
+research_question: >-
+  Did monitored air-quality trajectories in ULEZ-exposed London diverge from
+  comparable non-intervention locations after the registered intervention dates?
+
+scientific_boundary: >-
+  This diagnostic estimates observational and quasi-experimental contrasts.
+  It does not by itself establish health effects, source attribution, or prove
+  that an intervention caused every observed change.
+
+study_period:
+  requested_start: 2015-01-01
+  requested_end: 2026-12-31
+  matching_uses_post_intervention_data: false
+
+interventions:
+  - date: 2019-04-08
+    label: central_london_ulez
+  - date: 2021-10-25
+    label: ulez_expansion_2021
+  - date: 2023-08-29
+    label: london_wide_expansion
+
+outcomes:
+  primary:
+    - NO2
+  secondary:
+    - PM2.5
+    - PM10
+
+control_selection:
+  geography: England
+  exclude_equivalent_intervention_periods: true
+  pre_intervention_only: true
+  required_dimensions:
+    - site_type
+    - pre_intervention_pollutant_level
+    - pre_intervention_pollutant_trend
+  preferred_dimensions:
+    - traffic_intensity
+    - background_pollution
+    - meteorology
+    - urban_density
+
+methods:
+  primary:
+    - difference_in_differences
+    - interrupted_time_series
+  secondary:
+    - synthetic_control
+
+sensitivity:
+  covid_period:
+    enabled: true
+    start: 2020-03-23
+    end: 2021-07-19
+  leave_one_control_out: true
+  alternative_completeness_thresholds: true
+  roadside_and_background_separate: true
+
+minimum_integrity_requirements:
+  require_parent_manifest: true
+  require_parent_hash_verification: true
+  require_protocol_hash: true
+  require_pretrend_check: true
+  prohibit_post_intervention_matching: true
+  prohibit_unregistered_outcome_promotion: true
+
+permitted_conclusion_classes:
+  - observed
+  - associated
+  - consistent_with_intervention_effect
+  - not_distinguishable_from_controls
+  - insufficient_evidence
+
+prohibited_automatic_claims:
+  - proved_causation
+  - proved_health_effect
+  - proved_source_attribution
+  - proved_legal_or_policy_success
