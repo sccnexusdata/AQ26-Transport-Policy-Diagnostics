@@ -1,0 +1,48 @@
+name: AQ26 Transport Diagnostic CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aq26-transport-diagnostic-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Checkout one commit
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 1
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install minimal dependencies
+        run: |
+          python -m pip install --disable-pip-version-check -e . pytest
+
+      - name: Compile and test governance primitives
+        run: |
+          python -m compileall -q src tests
+          pytest
+
+      - name: Confirm scientific credential isolation
+        shell: bash
+        run: |
+          if grep -R -E 'secrets\.(CAMS|CDS|CDSE|EARTHDATA|FIRMS|METOFFICE|OPENAQ|OPENWEATHER|PURPLE|WAQI|WEBTRIS|OPENAI|GEMINI|GDRIVE|SMTP|SCCAIRQUALITY)' .github src tests protocol 2>/dev/null; then
+            echo "Parent or delivery credentials must not enter the diagnostic child repository." >&2
+            exit 1
+          fi
