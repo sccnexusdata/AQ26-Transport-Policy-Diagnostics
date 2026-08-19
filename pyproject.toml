@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=70"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aq26-transport-policy-diagnostics"
+version = "0.1.0"
+description = "Governed comparative transport-policy diagnostics consuming validated AQ26 evidence"
+requires-python = ">=3.11"
+dependencies = ["PyYAML>=6.0.1,<7"]
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
